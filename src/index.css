@@ -1,0 +1,237 @@
+/*
+ * Fuentes auto-hospedadas (sin depender de Google Fonts / CDN externo).
+ * Solo el subconjunto "latin": cubre espanol (acentos, n) e ingles y mantiene
+ * el bundle ligero para equipos escolares.
+ */
+@import '@fontsource/nunito/latin-400.css';
+@import '@fontsource/nunito/latin-600.css';
+@import '@fontsource/nunito/latin-700.css';
+@import '@fontsource/nunito/latin-800.css';
+@import '@fontsource/baloo-2/latin-500.css';
+@import '@fontsource/baloo-2/latin-600.css';
+@import '@fontsource/baloo-2/latin-700.css';
+@import '@fontsource/baloo-2/latin-800.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-paper font-sans text-ink antialiased;
+    margin: 0;
+    /* Base legible en equipos escolares antiguos. */
+    font-size: 16px;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-display;
+  }
+
+  /* Foco visible siempre (accesibilidad con teclado). */
+  :focus-visible {
+    outline: 3px solid theme('colors.sky.500');
+    outline-offset: 2px;
+    border-radius: 6px;
+  }
+}
+
+@layer components {
+  /*
+   * Boton 3D: firma visual estilo Duolingo.
+   * El borde inferior mas oscuro simula profundidad; al presionar "se hunde".
+   * Solo anima transform (acelerado por GPU).
+   */
+  .btn-3d {
+    @apply relative inline-flex select-none items-center justify-center gap-2
+      rounded-2xl px-6 py-3 font-display text-lg font-700 tracking-wide
+      transition-[transform,box-shadow] duration-100 ease-out;
+    transform: translateZ(0);
+  }
+  .btn-3d:active {
+    transform: translateY(4px);
+  }
+  .btn-3d:disabled {
+    @apply cursor-not-allowed opacity-50;
+    transform: none;
+  }
+
+  .btn-3d--green {
+    @apply bg-brand-500 text-white;
+    box-shadow: 0 5px 0 0 theme('colors.brand.700');
+  }
+  .btn-3d--green:active {
+    box-shadow: 0 1px 0 0 theme('colors.brand.700');
+  }
+
+  .btn-3d--sky {
+    @apply bg-sky-500 text-white;
+    box-shadow: 0 5px 0 0 theme('colors.sky.600');
+  }
+  .btn-3d--sky:active {
+    box-shadow: 0 1px 0 0 theme('colors.sky.600');
+  }
+
+  .btn-3d--sun {
+    @apply bg-sun-500 text-ink;
+    box-shadow: 0 5px 0 0 theme('colors.sun.600');
+  }
+  .btn-3d--sun:active {
+    box-shadow: 0 1px 0 0 theme('colors.sun.600');
+  }
+
+  .btn-3d--ghost {
+    @apply bg-white text-ink-soft;
+    box-shadow: 0 5px 0 0 #d7d9e6;
+  }
+  .btn-3d--ghost:active {
+    box-shadow: 0 1px 0 0 #d7d9e6;
+  }
+
+  /* Tarjeta blanca redondeada reutilizable. */
+  .card {
+    @apply rounded-3xl bg-white p-6 shadow-card;
+  }
+
+  /* Opcion tipo boton grande (multiple choice, etc.). */
+  .option-card {
+    @apply flex w-full items-center gap-3 rounded-2xl border-2 border-[#e4e6f1]
+      bg-white px-5 py-4 text-left text-lg font-600 text-ink
+      transition-[transform,border-color,background-color] duration-100;
+  }
+  .option-card:hover {
+    @apply border-sky-400;
+  }
+  .option-card:active {
+    transform: translateY(2px);
+  }
+  .option-card[aria-pressed='true'],
+  .option-card[data-selected='true'] {
+    @apply border-sky-500 bg-sky-50;
+  }
+  .option-card[data-state='correct'] {
+    @apply border-brand-500 bg-brand-50;
+  }
+  .option-card[data-state='wrong'] {
+    @apply border-coral-500 bg-coral-50;
+  }
+
+  /* Chip de palabra (banco de palabras, sentence builder). */
+  .word-chip {
+    @apply inline-flex items-center rounded-xl border-2 border-[#e4e6f1] bg-white
+      px-3 py-2 text-base font-700 text-ink transition-transform duration-100;
+  }
+  .word-chip:active {
+    transform: translateY(2px);
+  }
+  .word-chip:disabled {
+    @apply opacity-40;
+  }
+}
+
+@layer utilities {
+  .bg-sky-50 {
+    background-color: #e8f6fe;
+  }
+  .bg-brand-50 {
+    background-color: #eefbf3;
+  }
+  .bg-coral-50 {
+    background-color: #ffece9;
+  }
+  .bg-sun-50 {
+    background-color: #fff6e0;
+  }
+
+  /* Permite seleccionar texto aunque el contenedor tenga .no-select. */
+  .allow-select {
+    -webkit-user-select: text;
+    user-select: text;
+  }
+
+  /* Bloquea la seleccion de texto dentro del area del examen. */
+  .no-select {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}
+
+/* Respeta la preferencia del sistema de reducir movimiento. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ----- Impresion: reporte individual limpio en una hoja ----- */
+.print-only {
+  display: none;
+}
+@media print {
+  body {
+    background: #fff;
+    font-size: 12pt;
+  }
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block;
+  }
+  .print-page {
+    page-break-after: always;
+  }
+  .print-page:last-child {
+    page-break-after: auto;
+  }
+  @page {
+    margin: 16mm;
+  }
+}
+
+/* ----- Juegos del examen IoT ----- */
+@layer components {
+  /* Ficha de letra (Guess the word). */
+  .letter-tile {
+    @apply flex h-12 w-11 items-center justify-center rounded-xl border-2 border-b-4 border-[#d7d9e6]
+      bg-white font-display text-2xl font-800 text-ink transition-transform duration-100;
+  }
+  .letter-tile:hover:not(:disabled) {
+    @apply border-sky-400;
+  }
+  .letter-tile:active:not(:disabled) {
+    transform: translateY(2px);
+  }
+  .letter-tile:disabled {
+    @apply opacity-30;
+  }
+}
+
+/* Cable que "se dibuja" al conectarse (Connect the wires). */
+.wire-draw {
+  stroke-dasharray: 1200;
+  stroke-dashoffset: 1200;
+  animation: wire-draw 420ms ease-out forwards;
+}
+@keyframes wire-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
