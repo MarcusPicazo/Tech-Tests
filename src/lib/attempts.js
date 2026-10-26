@@ -7,6 +7,7 @@
 import { supabase, hasSupabase } from './supabase.js';
 import {
   localSubmissionDate,
+  unmarkSubmitted,
   saveLocalAttempt,
   clearProgress,
   enqueueAttempt,
@@ -37,7 +38,12 @@ export async function checkExistingSubmission(matricula) {
         console.warn('checkExistingSubmission: RPC no disponible', error.message);
         return null;
       }
-      return data || null;
+      if (data) return data;
+      // La base dice que NO ha entregado (p. ej. el profesor borro su intento
+      // para que lo repita): se olvida la marca local de esta computadora,
+      // salvo que su intento siga en la cola esperando conexion.
+      if (!getQueue().some((a) => a.matricula === mat)) unmarkSubmitted(mat);
+      return null;
     } catch (e) {
       console.warn('checkExistingSubmission: error de red', e);
       return null;
